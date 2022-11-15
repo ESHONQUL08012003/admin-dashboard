@@ -38,20 +38,21 @@ const getUser = async () => {
 
     RenderUser(result);
   } catch (err) {
-    console.log(err);
+    console.log(err, "salom");
   }
 };
 
 getUser();
 
 $("#form").addEventListener("submit", (e) => {
+  e.preventDefault();
   addUser();
 });
 
 // renderUser end
 
 // addUser
-const addUser = async () => {
+const addUser = () => {
   const userValue = $("#form1").value.trim();
   const userNameValue = $("#username").value.trim();
   const retingValue = $("#form2").value.trim();
@@ -63,26 +64,29 @@ const addUser = async () => {
   };
 
   if (userValue.length === 0 || userNameValue.length===0 || retingValue.length === 0) {
-    // $(".tostify").style.backgroundColor="red";
-    // $(".tostify").style.transform="translateX(0)";
-    // $(".tostify").innerHTML=`<strong>malumot to'ldiring</strong>`
+    $(".tostify").style.backgroundColor="red";
+    $(".tostify").style.transform="translateX(0)";
+    $(".tostify").innerHTML=`<strong>malumot to'ldiring</strong>`
 
-    // setTimeout(()=>{
-    //   $(".tostify").style.transform="translateX(200%)"
-    // },200)
+    setTimeout(()=>{
+      $(".tostify").style.transform="translateX(200%)"
+    },2000)
   } else {
-    // $(".tostify").style.backgroundColor="red";
-    // $(".tostify").style.transform="translateX(0)";
-    // $(".tostify").innerHTML=`<strong>malumot qo'shildi</strong>`
-    const respond = await fetch(data, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(person),
-    });
-    const result = await respond.json();
-    getUser(result);
+    $(".tostify").style.backgroundColor="chartreuse";
+    $(".tostify").style.transform="translateX(0)";
+    $(".tostify").innerHTML=`<strong>malumot qo'shildi</strong>`
+   
+    setTimeout(()=>{
+       fetch(data, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(person),
+      })
+      .then(respons => respons.json())
+      .then(result => getUser(result))
+    },2000)
   }
 };
 
@@ -107,7 +111,7 @@ const delUser = (userId) => {
   });
 };
 
-
+// delet user end 
 
 $("tbody").addEventListener("click", (e) => {
   if (e.target.classList.contains("btn-primary")) {
@@ -121,31 +125,46 @@ $("tbody").addEventListener("click", (e) => {
   }
 });
 
-const updateUser = () => {
+function  ubdateUser() {
+
   let editId = localStorage.getItem("editUser");
 
+  let changeName = $("#typeText").value.trim();
+  let changUserName = $("#userName").value.trim();
+  let changReting = $("#typeNumber").value.trim();
+
   const changeUser = {
-    title: $("#typeText").value.trim(),
-    user_name:$("#usernmae").value.trim(),
-    score: $("#typeNumber").value.trim(),
+    title: changeName,
+    user_name:changUserName,
+    score: changReting
   };
 
-  fetch(`http://localhost:5001/useres${editId}`, {
+  console.log(changeUser);
+
+  fetch(`http://localhost:5001/useres/${editId}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({changeUser}),
+    body: JSON.stringify(changeUser),
   });
   
 };
 
-$(".changesData").addEventListener("submit", () => {
-  setValue();
+$("#formChange").addEventListener("submit", (e) => {
+  e.preventDefault();
+    ubdateUser();
 });
 
-function setValue(data) {
-  $("#typeText").value = data.title;
-  $("#userName").value = data.user_name
-  $("#typeNumber").value = data.score;
+function setValue(userData) {
+  console.log(userData);
+  $("#typeText").value = userData.title;
+  $("#userName").value = userData.user_name
+  $("#typeNumber").value = userData.score;
+  console.log($("#typeText").value,  $("#userName").value,  $("#typeNumber").value);
 }
+
+
+$("#logOut").addEventListener("click", ()=>{
+  window.location.replace("../auriz.html")
+})
